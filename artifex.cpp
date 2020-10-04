@@ -1,11 +1,27 @@
+#include <vector>
+
 #include <SFML/Graphics.hpp>
 
 using namespace sf;
+using namespace std;
+
+vector<RectangleShape> cells = {
+    RectangleShape(Vector2f(100, 100)),
+    RectangleShape(Vector2f(100, 100)),
+    RectangleShape(Vector2f(100, 100)),
+};
 
 int main() {
-    RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-    CircleShape shape(100.f);
-    shape.setFillColor(Color::Green);
+    RenderWindow window(sf::VideoMode(800, 600), "SFML works!");
+
+    cells[0].setFillColor(Color::Green);
+    cells[1].setPosition(0.f, 0.f);
+
+    cells[1].setFillColor(Color::Green);
+    cells[1].setPosition(100.f, 0.f);
+
+    cells[2].setFillColor(Color::Green);
+    cells[2].setPosition(200.f, 0.f);
 
     while (window.isOpen())
     {
@@ -17,7 +33,10 @@ int main() {
         }
 
         window.clear();
-        window.draw(shape);
+        for (auto cell : cells) {
+            window.draw(cell);
+        }
+
         window.display();
     }
 
