@@ -10,18 +10,30 @@ using namespace sf;
 using namespace std;
 using json = nlohmann::json;
 
-int main() {
-    json source;
-    ifstream input("json/file2_100_100.json");
-    input >> source;
-    vector<RectangleShape> cells;
 
-    for (auto& item : source["data"][0]) {
-        auto cell = RectangleShape(Vector2f(1, 1));
-        auto color = Color(item[0], item[1], item[2]);
-        cell.setFillColor(color);
-        cells.push_back(cell);
+int main() {
+    Clock clock;
+
+    int current_frame = 0;
+    Time next_frame_time = milliseconds(0);
+    Time time_between_frames = milliseconds(30);
+
+    json source;
+    ifstream input("json/file5_1160_786.json");
+    input >> source;
+    vector<vector<RectangleShape>> frames;
+
+    for (int i = 1; i <= source["frames"]; i++) {
+        vector<RectangleShape> cells;
+        for (auto& item : source["data"][i]) {
+            auto cell = RectangleShape(Vector2f(1, 1));
+            auto color = Color(item[0], item[1], item[2]);
+            cell.setFillColor(color);
+            cells.push_back(cell);
+        }
+        frames.push_back(cells);
     }
+
 
     RenderWindow window(VideoMode(source["width"], source["height"]), "Artifex");
 
@@ -34,23 +46,32 @@ int main() {
                 window.close();
         }
 
-        window.clear();
+        if (next_frame_time <= clock.getElapsedTime()) {
 
-        float position_x = 0.f;
-        float position_y = 0.f;
+            float position_x = 0.f;
+            float position_y = 0.f;
 
-        int drawn_cells = 0;
+            int drawn_cells = 0;
 
-        for (auto& cell : cells) {
-            cell.setPosition(position_x, position_y);
-            window.draw(cell);
-            position_x += 1.f;
-            drawn_cells += 1;
-            if (drawn_cells == source["width"]) {
-                position_x = 0.f;
-                position_y += 1.f;
-                drawn_cells = 0;
+            for (auto& cell : frames[current_frame]) {
+                cell.setPosition(position_x, position_y);
+                window.draw(cell);
+                position_x += 1.f;
+                drawn_cells += 1;
+                if (drawn_cells == source["width"]) {
+                    position_x = 0.f;
+                    position_y += 1.f;
+                    drawn_cells = 0;
+                }
             }
+
+            if ((current_frame  + 1) == source["frames"]) {
+                current_frame = 0;
+            } else {
+                current_frame += 1;
+            }
+
+            next_frame_time += time_between_frames;
         }
 
         window.display();
