@@ -3,7 +3,7 @@ APP_NAME = artifex
 BUILD_DIR = build
 
 CPP = g++
-CFLAGS = -Wall -std=c++17
+CFLAGS = -Wall -Ofast -std=c++17
 
 DEPS = -lsfml-graphics -lsfml-window -lsfml-system
 
