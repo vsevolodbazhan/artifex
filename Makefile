@@ -11,7 +11,4 @@ build:
 	$(CPP) -c $(CFLAGS) $(APP_NAME).cpp -o $(BUILD_DIR)/$(APP_NAME).o
 	$(CPP) $(BUILD_DIR)/$(APP_NAME).o -o $(BUILD_DIR)/$(APP_NAME) $(DEPS)
 
-run: build
-	./$(BUILD_DIR)/$(APP_NAME)
-
-.PHONY: build run
+.PHONY: build
