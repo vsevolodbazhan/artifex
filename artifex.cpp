@@ -18,16 +18,10 @@ class Frame {
             for (unsigned int j = 0; j < height; ++j) {
                 for (unsigned int i = 0; i < width; ++i) {
                     const auto cell = cells[j * width + i];
-                    // cout << i << ' ' << j << ' ' << j * height << ' ' << cells.size() << ' ' << endl;
                     const auto color = Color(cell[0], cell[1], cell[2]);
                     image.setPixel(i, j, color);
                 }
             }
-
-            for (unsigned int i = 0; i < cells.size(); ++i) {
-
-            }
-
             texture.loadFromImage(image);
         }
 
@@ -42,9 +36,9 @@ class Frame {
 };
 
 
-int main() {
+int main(int argc, char** argv)  {
     json source;
-    ifstream input("json/file6_1500_600.json");
+    ifstream input(argv[1]);
     input >> source;
 
     vector<Frame> frames;
@@ -53,10 +47,11 @@ int main() {
     }
 
     Clock clock;
-
-    int current_frame = 0;
     Time next_frame_time = milliseconds(0);
-    Time time_between_frames = milliseconds(100);
+    Time time_between_frames = milliseconds(*argv[2]);
+
+    unsigned current_frame = 0;
+    unsigned displayed_frames = 0;
 
     RenderWindow window(VideoMode(source["width"], source["height"]), "Artifex");
 
@@ -81,6 +76,7 @@ int main() {
             }
 
             next_frame_time += time_between_frames;
+            displayed_frames += 1;
         }
     }
 
