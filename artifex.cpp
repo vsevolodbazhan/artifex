@@ -31,8 +31,8 @@ class Frame {
             image.create(width, height);
             for (unsigned int j = 0; j < height; ++j) {
                 for (unsigned int i = 0; i < width; ++i) {
-                    const auto cell = cells[j * width + i];
-                    const auto color = Color(cell[0], cell[1], cell[2]);
+                    const auto& cell = cells[j * width + i];
+                    const auto& color = Color(cell[0], cell[1], cell[2]);
                     image.setPixel(i, j, color);
                 }
             }
@@ -52,6 +52,9 @@ class Frame {
 
 int main(int argc, char** argv)  {
     Clock clock;
+
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
 
     json source;
     ifstream input(argv[1]);
