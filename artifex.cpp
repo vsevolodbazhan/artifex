@@ -60,7 +60,7 @@ int main(int argc, char** argv)  {
     const unsigned width = source["width"];
     const unsigned height = source["height"];
     const unsigned number_of_frames = source["frames"];
-    const auto data = source["data"];
+    const auto& data = source["data"];
 
     vector<Frame> frames;
     for (unsigned i = 0; i < number_of_frames; ++i) {
@@ -100,6 +100,7 @@ int main(int argc, char** argv)  {
 
             next_frame_time += time_between_frames;
             displayed_frames += 1;
+
             if (displayed_frames == 1) {
                 time_to_first_frame = clock.getElapsedTime();
             } else if (displayed_frames == number_of_frames) {
