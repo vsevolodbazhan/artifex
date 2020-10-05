@@ -10,30 +10,53 @@ using namespace sf;
 using namespace std;
 using json = nlohmann::json;
 
+class Frame {
+    public:
+        Frame(const unsigned width, const unsigned height, const vector<vector<Uint8>>& cells) {
+            Image image;
+            image.create(width, height);
+            for (unsigned int j = 0; j < height; ++j) {
+                for (unsigned int i = 0; i < width; ++i) {
+                    const auto cell = cells[j * width + i];
+                    // cout << i << ' ' << j << ' ' << j * height << ' ' << cells.size() << ' ' << endl;
+                    const auto color = Color(cell[0], cell[1], cell[2]);
+                    image.setPixel(i, j, color);
+                }
+            }
+
+            for (unsigned int i = 0; i < cells.size(); ++i) {
+
+            }
+
+            texture.loadFromImage(image);
+        }
+
+        const Sprite& getSprite() {
+            sprite.setTexture(texture);
+            return sprite;
+        }
+
+    private:
+        Sprite sprite;
+        Texture texture;
+};
+
 
 int main() {
+    json source;
+    ifstream input("json/file6_1500_600.json");
+    input >> source;
+
+    vector<Frame> frames;
+    for (unsigned i = 0; i < source["frames"]; ++i) {
+        frames.push_back(Frame(source["width"], source["height"], source["data"][i]));
+    }
+
     Clock clock;
 
     int current_frame = 0;
     Time next_frame_time = milliseconds(0);
-    Time time_between_frames = milliseconds(30);
-
-    json source;
-    ifstream input("json/file5_1160_786.json");
-    input >> source;
-    vector<vector<RectangleShape>> frames;
-
-    for (int i = 1; i <= source["frames"]; i++) {
-        vector<RectangleShape> cells;
-        for (auto& item : source["data"][i]) {
-            auto cell = RectangleShape(Vector2f(1, 1));
-            auto color = Color(item[0], item[1], item[2]);
-            cell.setFillColor(color);
-            cells.push_back(cell);
-        }
-        frames.push_back(cells);
-    }
-
+    Time time_between_frames = milliseconds(100);
 
     RenderWindow window(VideoMode(source["width"], source["height"]), "Artifex");
 
@@ -47,25 +70,11 @@ int main() {
         }
 
         if (next_frame_time <= clock.getElapsedTime()) {
+            window.clear();
+            window.draw(frames[current_frame].getSprite());
+            window.display();
 
-            float position_x = 0.f;
-            float position_y = 0.f;
-
-            int drawn_cells = 0;
-
-            for (auto& cell : frames[current_frame]) {
-                cell.setPosition(position_x, position_y);
-                window.draw(cell);
-                position_x += 1.f;
-                drawn_cells += 1;
-                if (drawn_cells == source["width"]) {
-                    position_x = 0.f;
-                    position_y += 1.f;
-                    drawn_cells = 0;
-                }
-            }
-
-            if ((current_frame  + 1) == source["frames"]) {
+            if ((current_frame + 1) == source["frames"]) {
                 current_frame = 0;
             } else {
                 current_frame += 1;
@@ -73,8 +82,6 @@ int main() {
 
             next_frame_time += time_between_frames;
         }
-
-        window.display();
     }
 
     return 0;
