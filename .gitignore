@@ -6,3 +6,6 @@ build
 
 # Other
 json
+
+# macOS
+.DS_Store
